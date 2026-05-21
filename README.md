@@ -20,7 +20,7 @@ AuditHub allows administrators to visually design custom surveys and checklists 
 
 ## 🛠️ Tech Stack
 
-* **Core Framework:** Laravel 11 (PHP 8.2+)
+* **Core Framework:** Laravel 13 (PHP 8.2+)
 * **Reactive UI:** Livewire 3 & Alpine.js
 * **Styling:** Tailwind CSS (Modern, minimalist design)
 * **Database:** MySQL 8.0+ (Leveraging native JSON support)
@@ -32,7 +32,7 @@ AuditHub allows administrators to visually design custom surveys and checklists 
 ## ⚙️ Installation & Setup
 
 ### 1. Clone the repository
-`git clone https://github.com/your-username/audithub.git`
+`git clone https://github.com/cranties/audithub.git`
 `cd audithub`
 
 ### 2. Install PHP and Node dependencies
