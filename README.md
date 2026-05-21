@@ -32,100 +32,89 @@ AuditHub allows administrators to visually design custom surveys and checklists 
 ## ⚙️ Installation & Setup
 
 ### 1. Clone the repository
-```bash
-git clone [https://github.com/your-username/audithub.git](https://github.com/your-username/audithub.git)
-cd audithub
+`git clone https://github.com/your-username/audithub.git`
+`cd audithub`
 
 ### 2. Install PHP and Node dependencies
-```bash
-composer install
-npm install
-npm run build
-3. Environment Configuration
+`composer install`
+`npm install`
+`npm run build`
+
+### 3. Environment Configuration
 Duplicate the example environment file and generate the application key.
+`cp .env.example .env`
+`php artisan key:generate`
 
-```bash
-cp .env.example .env
-php artisan key:generate
-Configure your database credentials in the .env file:
-
-Snippet di codice
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=audithub
-DB_USERNAME=root
-DB_PASSWORD=
-
+Configure your database credentials in the `.env` file:
+`DB_CONNECTION=mysql`
+`DB_HOST=127.0.0.1`
+`DB_PORT=3306`
+`DB_DATABASE=audithub`
+`DB_USERNAME=root`
+`DB_PASSWORD=`
 
 ### 4. Database Migrations
 Run the migrations to create the JSON-supported surveys and submissions tables.
+`php artisan migrate`
 
-```bash
-php artisan migrate
-5. Storage Link (Optional but recommended)
+### 5. Storage Link (Optional but recommended)
 While uploads are stored privately, linking the public storage is good practice for general assets.
+`php artisan storage:link`
 
-```bash
-php artisan storage:link
-
+---
 
 ## 🚦 Queue & Background Jobs Configuration
+
 AuditHub relies heavily on Laravel Queues to process PDF generation asynchronously. If the queue worker is not running, PDFs will not be generated.
 
-Local Development Setup
-In your .env file, set the queue connection. For local development, the database driver is easiest:
+### Local Development Setup
+In your `.env` file, set the queue connection. For local development, the database driver is easiest:
+`QUEUE_CONNECTION=database`
 
-Snippet di codice
-QUEUE_CONNECTION=database
 Start the local worker:
+`php artisan queue:work`
 
-```bash
-php artisan queue:work
-Production Setup (Supervisor)
+### Production Setup (Supervisor)
 For production environments, you should use Redis for better performance and Supervisor to keep the queue worker alive permanently.
 
-Set your .env for Redis:
+1. Set your `.env` for Redis:
+`QUEUE_CONNECTION=redis`
 
-Snippet di codice
-QUEUE_CONNECTION=redis
-Install Supervisor on your Linux server (e.g., Ubuntu):
+2. Install Supervisor on your Linux server (e.g., Ubuntu):
+`sudo apt-get install supervisor`
 
-B```bash
-sudo apt-get install supervisor
-Create a configuration file /etc/supervisor/conf.d/audithub-worker.conf:
+3. Create a configuration file `/etc/supervisor/conf.d/audithub-worker.conf`:
+`[program:audithub-worker]`
+`process_name=%(program_name)s_%(process_num)02d`
+`command=php /path-to-your-project/artisan queue:work redis --sleep=3 --tries=3 --max-time=3600`
+`autostart=true`
+`autorestart=true`
+`stopasgroup=true`
+`killasgroup=true`
+`user=www-data`
+`numprocs=8`
+`redirect_stderr=true`
+`stdout_logfile=/path-to-your-project/storage/logs/worker.log`
+`stopwaitsecs=3600`
 
-Ini, TOML
-[program:audithub-worker]
-process_name=%(program_name)s_%(process_num)02d
-command=php /path-to-your-project/artisan queue:work redis --sleep=3 --tries=3 --max-time=3600
-autostart=true
-autorestart=true
-stopasgroup=true
-killasgroup=true
-user=www-data
-numprocs=8
-redirect_stderr=true
-stdout_logfile=/path-to-your-project/storage/logs/worker.log
-stopwaitsecs=3600
-Start Supervisor:
+4. Start Supervisor:
+`sudo supervisorctl reread`
+`sudo supervisorctl update`
+`sudo supervisorctl start audithub-worker:*`
 
-```bash
-sudo supervisorctl reread
-sudo supervisorctl update
-sudo supervisorctl start audithub-worker:*
+---
 
 ## 🏃‍♂️ Running the Application locally
+
 Once everything is configured, start the Laravel development server:
+`php artisan serve`
 
-```bash
-php artisan serve
 Start the Vite development server for hot-reloading Tailwind and JS:
+`npm run dev`
 
-```bash
-npm run dev
-Your application will be available at http://localhost:8000.
+Your application will be available at `http://localhost:8000`.
 
+---
 
-📝 License
-This project is open-sourced software licensed under the MIT license.
+## 📝 License
+This project is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
